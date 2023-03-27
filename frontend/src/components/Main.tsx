@@ -1,10 +1,23 @@
-import { Box, Button, Center, Flex, Spinner, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Spinner,
+  useBreakpointValue,
+  VStack
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { usePosts } from '../hooks/usePosts';
 import Header from './Header';
+import NavLinks from './NavLinks';
 import PostResume from './PostResume';
 
 export default function Main() {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  });
   const { loadPosts, posts } = usePosts();
   const [loadedPosts, setLoadedPost] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +45,15 @@ export default function Main() {
       spacing={0}
     >
       <Header />
+      {!isWideVersion && (
+        <NavLinks
+          flexDir="row"
+          w="full"
+          justifyContent="space-between"
+          alignItems="end"
+          mt={-20}
+        />
+      )}
       {loading && (
         <Box w="full" h="100vh">
           <Center w="full" h="full">
@@ -56,7 +78,15 @@ export default function Main() {
         />
       ))}
       <Flex w="full" h={20} justifyContent="center" padding={10}>
-        <Button onClick={loadMorePosts}>Carregar mais posts</Button>
+        <Button
+          onClick={loadMorePosts}
+          variant="solid"
+          textColor="white"
+          bgColor="primaryGreen"
+          size={isWideVersion ? 'lg' : 'md'}
+        >
+          Carregar mais posts
+        </Button>
       </Flex>
     </VStack>
   );

@@ -1,10 +1,14 @@
-import { Box, Center, Spinner, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Spinner,
+  Text,
+  useBreakpointValue
+} from '@chakra-ui/react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import BackButton from '../../components/BackButton';
-import CardUser from '../../components/CardUser';
-import Header from '../../components/Header';
 import PostResume from '../../components/PostResume';
 import { usePosts } from '../../hooks/usePosts';
 import { api } from '../../services/axios';
@@ -36,6 +40,10 @@ interface UserProps {
 }
 
 function User({ user }: UserProps) {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  });
   const [loading, seLoading] = useState(true);
   const { posts, loadPosts } = usePosts();
   const userPosts = posts.filter(posts => Number(posts.userId) == user.id);
@@ -56,11 +64,15 @@ function User({ user }: UserProps) {
       w="full"
       textAlign="left"
       color="white"
-      padding="4rem 10rem"
+      padding={isWideVersion ? '4rem 10rem' : '1rem'}
       bgColor="gray.800"
     >
       <BackButton />
-      <Text fontSize={24} textAlign="center">
+      <Text
+        fontSize={isWideVersion ? 24 : 18}
+        textAlign="center"
+        mt={isWideVersion ? '4rem' : '0.5rem'}
+      >
         Todas as publicações de <strong>{user.name}</strong>
       </Text>
       {loading && (

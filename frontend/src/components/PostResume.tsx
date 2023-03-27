@@ -1,4 +1,12 @@
-import { Box, Divider, Flex, Text, Icon, Button } from '@chakra-ui/react';
+import {
+  Box,
+  Divider,
+  Flex,
+  Text,
+  Icon,
+  Button,
+  useBreakpointValue
+} from '@chakra-ui/react';
 import { AiOutlineLike, AiOutlineDislike, AiOutlineSave } from 'react-icons/ai';
 import { BiCommentDetail } from 'react-icons/bi';
 import Link from 'next/link';
@@ -36,6 +44,10 @@ function PostResume({
   hastags,
   comments
 }: PostResumeProps) {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  });
   const [showComments, setShowComments] = useState(false);
   const [liked, setLiked] = useState(false);
   const [unLiked, setUnLiked] = useState(false);
@@ -44,17 +56,21 @@ function PostResume({
   const month = date.toLocaleString('en', { month: 'long' });
   return (
     <Box w="full" display="flex" alignItems="center" textColor="white">
-      <Text fontSize={24} w={70} fontWeight="bold" textAlign="center">
-        {day}
-        <br />
-        {month.slice(0, 3)}
-      </Text>
-      <Divider orientation="vertical" margin={4} bgColor="primaryGreen" />
+      {isWideVersion && (
+        <>
+          <Text fontSize={24} w={70} fontWeight="bold" textAlign="center">
+            {day}
+            <br />
+            {month.slice(0, 3)}
+          </Text>
+          <Divider orientation="vertical" margin={4} bgColor="primaryGreen" />
+        </>
+      )}
       <Box w="full">
         <Link href={`/post/${id}`} passHref>
           <Text
             as="h1"
-            fontSize={24}
+            fontSize={isWideVersion ? 24 : 18}
             textColor="primaryGreen"
             fontWeight="bold"
             textTransform="capitalize"
@@ -82,7 +98,7 @@ function PostResume({
             ...ler mais
           </Text>
         </Link>
-        <Flex mt={2}>
+        <Flex mt={2} display={isWideVersion ? 'flex' : 'block'}>
           {hastags.map(hastag => (
             <Box
               key={Math.random()}
@@ -91,6 +107,7 @@ function PostResume({
               border="1px solid #6EEB83"
               rounded={10}
               textColor="primaryGreen"
+              display={isWideVersion ? 'block' : 'none'}
             >
               <Text as="span" fontSize={14}>
                 #{hastag}

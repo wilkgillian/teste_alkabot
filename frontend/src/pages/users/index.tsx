@@ -1,17 +1,15 @@
 import {
   Box,
-  Card,
   Center,
   Container,
   SimpleGrid,
   Spinner,
-  Text
+  useBreakpointValue
 } from '@chakra-ui/react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import BackButton from '../../components/BackButton';
 import CardUser from '../../components/CardUser';
 import Header from '../../components/Header';
+import NavLinks from '../../components/NavLinks';
 import Sidebar from '../../components/Sidebar';
 import { useUsers } from '../../hooks/useUsers';
 
@@ -40,6 +38,10 @@ interface UsersProps {
 }
 
 function Users() {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  });
   const [loading, setLoading] = useState(true);
   const { loadUsers, users } = useUsers();
   useEffect(() => {
@@ -48,9 +50,18 @@ function Users() {
   }, [users]);
   return (
     <Container w="full" maxW={1300} display="flex" bgColor="gray.800">
-      <Sidebar />
+      {isWideVersion && <Sidebar />}
       <Box w="full" h="100vh" overflowY="scroll" padding={4}>
         <Header />
+        {!isWideVersion && (
+          <NavLinks
+            flexDir="row"
+            w="full"
+            justifyContent="space-between"
+            alignItems="end"
+            mt={-14}
+          />
+        )}
         {loading && (
           <Center>
             <Spinner size="xl" color="primaryGreen" />
@@ -60,7 +71,7 @@ function Users() {
           w="full"
           h="full"
           textColor="white"
-          columns={3}
+          columns={isWideVersion ? 3 : 1}
           spacing={4}
           pt={10}
         >

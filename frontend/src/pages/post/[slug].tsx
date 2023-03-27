@@ -1,11 +1,16 @@
-import { Box, Center, Container, Spinner, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Spinner,
+  Text,
+  useBreakpointValue
+} from '@chakra-ui/react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import BackButton from '../../components/BackButton';
 import CommentBox from '../../components/CommentBox';
 import Header from '../../components/Header';
-import Sidebar from '../../components/Sidebar';
 import { usePosts } from '../../hooks/usePosts';
 import { api } from '../../services/axios';
 
@@ -33,6 +38,10 @@ interface CommentsProps {
 }
 
 function Post({ post }: PostProps) {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  });
   const [author, setAuthor] = useState('');
   const [loading, setLoading] = useState(true);
   const [comments, setComments] = useState([]);
@@ -58,26 +67,31 @@ function Post({ post }: PostProps) {
       w="full"
       h="full"
       maxW={1300}
-      padding="4rem 10rem"
-      margin="auto"
+      padding={isWideVersion ? '4rem 10rem' : '1rem'}
+      margin={isWideVersion ? 'auto' : '0.5rem'}
       bgColor="gray.800"
       textColor="white"
     >
       <Header />
       <BackButton />
       <Text
-        fontSize={48}
+        mt={isWideVersion ? '1rem' : '2rem'}
+        fontSize={isWideVersion ? 48 : 22}
         textTransform="capitalize"
         fontWeight="bold"
         textColor="primaryGreen"
-        mb={4}
+        mb={isWideVersion ? 4 : 1}
       >
         {post.title}
       </Text>
-      <Text color="gray.500" fontSize={22} mb={12}>
+      <Text color="gray.500" fontSize={22} mb={isWideVersion ? 12 : 2}>
         {author}
       </Text>
-      <Text fontSize={32} fontWeight="thin" textColor="white">
+      <Text
+        fontSize={isWideVersion ? 32 : 22}
+        fontWeight="thin"
+        textColor="white"
+      >
         {post.body}
       </Text>
       <Box mt={20}>

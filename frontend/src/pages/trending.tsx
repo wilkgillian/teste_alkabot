@@ -1,12 +1,22 @@
-import { Box, Center, Container, Spinner } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Container,
+  Spinner,
+  useBreakpointValue
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import BackButton from '../components/BackButton';
 import Header from '../components/Header';
+import NavLinks from '../components/NavLinks';
 import PostResume from '../components/PostResume';
 import Sidebar from '../components/Sidebar';
 import { usePosts } from '../hooks/usePosts';
 
 function Trending() {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  });
   const [loading, setLoading] = useState(true);
   const { posts, loadPosts } = usePosts();
   const trendingPosts = posts.slice(0, 10);
@@ -15,15 +25,34 @@ function Trending() {
     setLoading(false);
   }, []);
   return (
-    <Container w="full" h="100vh" maxW={1300} display="flex" bgColor="gray.800">
+    <Container
+      w="full"
+      h="100vh"
+      maxW={1300}
+      display={isWideVersion ? 'flex' : 'block'}
+      bgColor="gray.800"
+    >
       {loading && (
         <Center>
           <Spinner size="xl" color="primaryGreen" />
         </Center>
       )}
-      <Sidebar />
+      {isWideVersion ? (
+        <Sidebar />
+      ) : (
+        <>
+          <Header />
+          <NavLinks
+            flexDir="row"
+            w="full"
+            justifyContent="space-between"
+            alignItems="end"
+            mt={-14}
+          />
+        </>
+      )}
       <Box w="full" h="100vh" overflowY="scroll" padding={4}>
-        <Header />
+        {isWideVersion && <Header />}
         {trendingPosts.map(post => (
           <PostResume
             key={post.id}

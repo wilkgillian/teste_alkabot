@@ -6,14 +6,20 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Spinner
+  Spinner,
+  useBreakpointValue
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import NavLinks from '../components/NavLinks';
 import PostResume from '../components/PostResume';
 import Sidebar from '../components/Sidebar';
 import { usePosts } from '../hooks/usePosts';
 
 function Search() {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  });
   const { posts, loadPosts } = usePosts();
   const [value, setValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,8 +37,23 @@ function Search() {
     loadPosts();
   }, []);
   return (
-    <Container w="full" maxW={1300} h="100vh" display="flex" bgColor="gray.800">
-      <Sidebar />
+    <Container
+      w="full"
+      maxW={1300}
+      h="100vh"
+      display={isWideVersion ? 'flex' : 'block'}
+      bgColor="gray.800"
+    >
+      {isWideVersion ? (
+        <Sidebar />
+      ) : (
+        <NavLinks
+          flexDir="row"
+          w="full"
+          justifyContent="space-between"
+          alignItems="end"
+        />
+      )}
       <Box w="full" h="100vh" overflowY="scroll" padding={4}>
         <InputGroup size="md" w="90%" m="2rem auto">
           <Input

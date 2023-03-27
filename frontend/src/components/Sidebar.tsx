@@ -1,10 +1,14 @@
-import { Button, Icon, Text, VStack } from '@chakra-ui/react';
+import { Icon, VStack, useBreakpointValue } from '@chakra-ui/react';
 import { FaBloggerB } from 'react-icons/fa';
-import { IoIosAddCircleOutline } from 'react-icons/io';
 import Link from 'next/link';
 import NavLinks from './NavLinks';
 
 function Sidebar() {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true
+  });
+
   return (
     <VStack
       as="ul"
@@ -31,7 +35,7 @@ function Sidebar() {
         />
       </Link>
       <NavLinks />
-      <Button
+      {/* <Button
         variant="unstyled"
         display="block"
         bgColor="transparent"
@@ -44,7 +48,7 @@ function Sidebar() {
       >
         <Icon as={IoIosAddCircleOutline} fontSize="3xl" />
         <Text textColor="white">Criar</Text>
-      </Button>
+      </Button> */}
     </VStack>
   );
 }
