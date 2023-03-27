@@ -61,6 +61,7 @@ function Post({ post }: PostProps) {
       padding="4rem 10rem"
       margin="auto"
       bgColor="gray.800"
+      textColor="white"
     >
       <Header />
       <BackButton />
@@ -76,7 +77,7 @@ function Post({ post }: PostProps) {
       <Text color="gray.500" fontSize={22} mb={12}>
         {author}
       </Text>
-      <Text fontSize={32} fontWeight="thin">
+      <Text fontSize={32} fontWeight="thin" textColor="white">
         {post.body}
       </Text>
       <Box mt={20}>

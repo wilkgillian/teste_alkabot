@@ -9,7 +9,13 @@ function BackButton() {
     router.back();
   }
   return (
-    <Button leftIcon={<BiArrowBack />} onClick={gotToBack} variant="ghost">
+    <Button
+      leftIcon={<BiArrowBack />}
+      onClick={gotToBack}
+      variant="ghost"
+      bgColor="primaryGreen"
+      textColor="white"
+    >
       Voltar
     </Button>
   );

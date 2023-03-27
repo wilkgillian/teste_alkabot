@@ -72,6 +72,7 @@ function CardUser({
         }}
         bgColor="gray.700"
         h={500}
+        textColor="white"
       >
         <CardBody>
           <Center>
