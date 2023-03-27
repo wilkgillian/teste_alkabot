@@ -47,7 +47,7 @@ function Users() {
     setLoading(false);
   }, [users]);
   return (
-    <Container w="full" h="100vh" maxW={1300} display="flex" bgColor="gray.800">
+    <Container w="full" maxW={1300} display="flex" bgColor="gray.800">
       <Sidebar />
       <Box w="full" h="100vh" overflowY="scroll" padding={4}>
         <Header />

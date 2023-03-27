@@ -99,6 +99,7 @@ function PostResume({
           ))}
           <Flex w="full" justifyContent="flex-end" alignItems="center" gap={2}>
             <Button
+              bgColor="gray.700"
               leftIcon={<BiCommentDetail />}
               onClick={() => setShowComments(!showComments)}
             >

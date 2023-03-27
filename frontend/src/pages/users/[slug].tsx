@@ -54,7 +54,6 @@ function User({ user }: UserProps) {
   return (
     <Box
       w="full"
-      h="100vh"
       textAlign="left"
       color="white"
       padding="4rem 10rem"
