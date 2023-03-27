@@ -34,7 +34,10 @@ const theme = extendTheme({
     primaryGreen: '#6EEB83'
   },
   fonts,
-  breakpoints
+  breakpoints,
+  main: {
+    bgColor: '#000000'
+  }
 });
 
 export default theme;
