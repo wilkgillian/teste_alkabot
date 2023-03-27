@@ -15,7 +15,7 @@ function Trending() {
     setLoading(false);
   }, []);
   return (
-    <Container w="full" h="100vh" maxW={1300} display="flex">
+    <Container w="full" h="100vh" maxW={1300} display="flex" bgColor="gray.800">
       {loading && (
         <Center>
           <Spinner size="xl" color="primaryGreen" />

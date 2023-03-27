@@ -31,7 +31,7 @@ function Search() {
     loadPosts();
   }, []);
   return (
-    <Container w="full" maxW={1300} h="100vh" display="flex">
+    <Container w="full" maxW={1300} h="100vh" display="flex" bgColor="gray.800">
       <Sidebar />
       <Box w="full" h="100vh" overflowY="scroll" padding={4}>
         <InputGroup size="md" w="90%" m="2rem auto">

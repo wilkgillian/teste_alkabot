@@ -52,7 +52,14 @@ function User({ user }: UserProps) {
     seLoading(false);
   }, []);
   return (
-    <Box w="full" h="100vh" textAlign="left" color="white" padding="4rem 10rem">
+    <Box
+      w="full"
+      h="100vh"
+      textAlign="left"
+      color="white"
+      padding="4rem 10rem"
+      bgColor="gray.800"
+    >
       <BackButton />
       <Text fontSize={24} textAlign="center">
         Todas as publicações de <strong>{user.name}</strong>

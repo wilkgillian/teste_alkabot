@@ -64,7 +64,7 @@ function PostResume({
           </Text>
           <Link href={`/users/${userId}`} passHref>
             <Text
-              as="span"
+              as="h1"
               fontSize={12}
               textColor="gray.500"
               fontWeight="bold"
@@ -77,8 +77,10 @@ function PostResume({
         <Text as="p" maxH={120} overflow="hidden" textOverflow="ellipsis">
           {content}
         </Text>
-        <Link passHref href="/">
-          <Text textColor="primaryGreen">...ler mais</Text>
+        <Link passHref href={`/post/${id}`}>
+          <Text as="strong" textColor="primaryGreen">
+            ...ler mais
+          </Text>
         </Link>
         <Flex mt={2}>
           {hastags.map(hastag => (

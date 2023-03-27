@@ -54,7 +54,14 @@ function Post({ post }: PostProps) {
     );
   }
   return (
-    <Box w="full" h="full" maxW={1300} padding="4rem 10rem" margin="auto">
+    <Box
+      w="full"
+      h="full"
+      maxW={1300}
+      padding="4rem 10rem"
+      margin="auto"
+      bgColor="gray.800"
+    >
       <Header />
       <BackButton />
       <Text
