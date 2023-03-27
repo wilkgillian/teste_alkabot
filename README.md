@@ -10,7 +10,7 @@ Blog
 
 ## Autores
 
-- [@octokatherine](https://www.github.com/wilkgillian)
+- [@wilkgillian](https://www.github.com/wilkgillian)
 
 ## Rodando o projeto
 
