@@ -1,4 +1,6 @@
 from datetime import datetime
+import math
+import random
 from sqlite3 import Date
 import json
 from click import DateTime
@@ -17,6 +19,14 @@ from itertools import islice
 
 load_dotenv()
 DATABASE_URL = (os.environ["DATABASE"])
+
+
+def id_generator():
+    i = 300
+    while True:
+        yield i
+        i += 1
+
 
 database = databases.Database(DATABASE_URL)
 
@@ -40,22 +50,22 @@ users = sqlalchemy.Table(
 comments = sqlalchemy.Table(
     "comments",
     metadata,
-    sqlalchemy.Column("postId", sqlalchemy.String, nullable=False),
+    sqlalchemy.Column("postId", sqlalchemy.Integer, nullable=False),
     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
     sqlalchemy.Column("name", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("email", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("body", sqlalchemy.String, nullable=False),
-    sqlalchemy.Column("created_at", sqlalchemy.String,
+    sqlalchemy.Column("created_at", sqlalchemy.DateTime,
                       nullable=False, default=datetime.now())
 )
 posts = sqlalchemy.Table(
     "posts",
     metadata,
-    sqlalchemy.Column("userId", sqlalchemy.String, nullable=False),
+    sqlalchemy.Column("userId", sqlalchemy.Integer, nullable=False),
     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
     sqlalchemy.Column("title", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("body", sqlalchemy.String, nullable=False),
-    sqlalchemy.Column("created_at", sqlalchemy.String,
+    sqlalchemy.Column("created_at", sqlalchemy.DateTime,
                       nullable=False, default=datetime.now())
 )
 engine = sqlalchemy.create_engine(
@@ -64,27 +74,8 @@ engine = sqlalchemy.create_engine(
 metadata.create_all(engine)
 
 
-class Company(BaseModel):
-    name: str
-    catchPhrase: str
-    bs: str
-
-
-class Geo(BaseModel):
-    lat: str
-    lng: str
-
-
-class Address(BaseModel):
-    street: str
-    suite: str
-    city: str
-    zipcode: str
-    geo: Geo
-
-
 class User(BaseModel):
-    id: int
+    _id: int
     name: str
     username: str
     email: str
@@ -92,6 +83,23 @@ class User(BaseModel):
     phone: str
     website: str
     company: object
+    created_at: Date
+
+
+class Post(BaseModel):
+    _id: int
+    userId: int
+    title: str
+    body: str
+    created_at: Date
+
+
+class Comment(BaseModel):
+    _id: int
+    postId: int
+    name: str
+    email: str
+    body: str
     created_at: Date
 
 
@@ -130,8 +138,10 @@ async def getUsers():
 
 @app.post("/users")
 async def createUser(user: User):
+    gen = id_generator()
+    _id = next(gen) * random.random()
     query = users.insert().values(
-        id=user.id,
+        id=_id,
         name=user.name,
         username=user.username,
         email=user.email,
@@ -139,33 +149,89 @@ async def createUser(user: User):
         phone=user.phone,
         website=user.website,
         company=str(json.dumps(user.company)),
-        created_at=str(user.created_at))
+        created_at=datetime.now())
     await database.execute(query)
-    query_user = users.select().where(users.columns.id == user.id)
+    query_user = users.select().where(users.columns.id == _id)
     await database.execute(query_user)
     created_user = await database.fetch_all(query_user)
     return created_user
 
 
-@app.get("/users/{id}")
-async def getOneUser(id: int):
-    query = users.select().where(users.columns.id == id)
+@ app.get("/users/{id}")
+async def getOneUser(_id: int):
+    query = users.select().where(users.columns.id == _id)
     user = await database.fetch_one(query)
     return user
 
 
-@app.get("/comments/{userId}")
-async def getCommentsByUser(userId: int):
-    query = comments.select().where(comments.columns.userId == userId)
-    comments = await database.execute(query)
-    return comments
+@ app.get("/posts")
+async def getAllPosts():
+    query = posts.select()
+    all_posts = await database.fetch_all(query)
+    return all_posts
 
 
-@app.post("/comments")
-async def createComment(comment):
-    query = comments.select().where(comments.columns.userId == comment)
-    comments = await database.execute(query)
-    return comments
+@ app.get("/posts/{userId}")
+async def getAllPostsByUser(userId: str):
+    query = posts.select().where(posts.columns.userId == userId)
+    all_posts_by_user = await database.fetch_all(query)
+    return all_posts_by_user
+
+
+@ app.delete("/posts/{id}")
+async def deleteOnePost(_id: int):
+    query = posts.delete().where(posts.columns.id == _id)
+    await database.execute(query)
+    return {'message': 'post deletado'}
+
+
+@ app.put("/posts/{id}")
+async def updateOnePost(_id: int, userId: int, post: Post):
+    query = posts.update().where(posts.columns.id == _id).values(id=_id,
+                                                                 userId=userId,
+                                                                 title=post.title,
+                                                                 body=post.body,
+                                                                 created_at=str(post.created_at))
+    await database.execute(query)
+    post = await database.fetch_one(posts.select().where(posts.columns.id == _id))
+    return post
+
+
+@ app.post("/posts")
+async def createPost(post: Post):
+    gen = id_generator()
+    _id = next(gen) * random.random()
+    query = posts.insert().values(id=_id,
+                                  userId=post.userId,
+                                  title=post.title,
+                                  body=post.body,
+                                  created_at=datetime.now())
+    await database.execute(query)
+    query_post_created = posts.select().where(posts.columns.id == _id)
+    post = await database.fetch_one(query_post_created)
+    return post
+
+
+@ app.get("/comments/{postId}")
+async def getCommentsByUser(postId: int):
+    query = comments.select().where(comments.columns.postId == postId)
+    all_comments = await database.fetch_all(query)
+    return all_comments
+
+
+@ app.post("/comments/{postId}")
+async def createComment(postId: int, comment: Comment):
+    gen = id_generator()
+    _id = next(gen)
+    query = comments.insert().values(postId=postId,
+                                     id=_id,
+                                     name=comment.name,
+                                     email=comment.email,
+                                     body=comment.body,
+                                     created_at=datetime.now())
+    await database.execute(query)
+    created_comment = await database.fetch_one(comments.select().where(comments.columns.id == _id))
+    return created_comment
 
 
 # @app.delete("/file/delete/{file_id}")
