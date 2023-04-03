@@ -57,6 +57,7 @@ function Search() {
       <Box w="full" h="100vh" overflowY="scroll" padding={4}>
         <InputGroup size="md" w="90%" m="2rem auto">
           <Input
+          textColor="white"
             pr="4.5rem"
             type="text"
             placeholder="Buscar post"
