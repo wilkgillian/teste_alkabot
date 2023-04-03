@@ -1,21 +1,16 @@
 from datetime import datetime
-import math
 import random
 from sqlite3 import Date
 import json
-from click import DateTime
-import openpyxl
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 import databases
-import pandas as pd
 import sqlalchemy
 from pydantic import BaseModel
 import os
-from openpyxl.utils.dataframe import dataframe_to_rows
 from dotenv import load_dotenv
-from itertools import islice
+
 
 load_dotenv()
 DATABASE_URL = (os.environ["DATABASE"])
@@ -157,6 +152,31 @@ async def createUser(user: User):
     return created_user
 
 
+@app.delete("/users/{id}")
+async def deleteUser(id: int):
+    query = users.delete().where(users.columns.id == id)
+    await database.execute(query)
+    return {"message": "usuário {id} deletado com sucesso"}
+
+
+@app.put("/users/{id}")
+async def updateUser(_id: int, user: User):
+    query = users.update().where(users.columns.id == _id).values(
+        name=user.name,
+        username=user.username,
+        email=user.email,
+        address=str(json.dumps(user.address)),
+        phone=user.phone,
+        website=user.website,
+        company=str(json.dumps(user.company)),
+        created_at=datetime.now()
+    )
+    await database.execute(query)
+    query_updated_user = users.select().where(users.columns.id == _id)
+    user_updated = await database.execute(query_updated_user)
+    return user_updated
+
+
 @ app.get("/users/{id}")
 async def getOneUser(_id: int):
     query = users.select().where(users.columns.id == _id)
@@ -172,7 +192,7 @@ async def getAllPosts():
 
 
 @ app.get("/posts/{userId}")
-async def getAllPostsByUser(userId: str):
+async def getAllPostsByUser(userId: int):
     query = posts.select().where(posts.columns.userId == userId)
     all_posts_by_user = await database.fetch_all(query)
     return all_posts_by_user
@@ -213,7 +233,7 @@ async def createPost(post: Post):
 
 
 @ app.get("/comments/{postId}")
-async def getCommentsByUser(postId: int):
+async def getCommentsByPostId(postId: int):
     query = comments.select().where(comments.columns.postId == postId)
     all_comments = await database.fetch_all(query)
     return all_comments
@@ -222,7 +242,8 @@ async def getCommentsByUser(postId: int):
 @ app.post("/comments/{postId}")
 async def createComment(postId: int, comment: Comment):
     gen = id_generator()
-    _id = next(gen)
+    _id = next(gen)*random.random()
+
     query = comments.insert().values(postId=postId,
                                      id=_id,
                                      name=comment.name,
@@ -234,15 +255,22 @@ async def createComment(postId: int, comment: Comment):
     return created_comment
 
 
-# @app.delete("/file/delete/{file_id}")
-# async def update_file(file_id: int):
-#     query = files.delete().where(files.columns.id == file_id)
-#     await database.execute(query)
-#     return {"message": "the file with id={} deleted successfully".format(file_id)}
+@ app.put("/comments/{_id}")
+async def updateComment(_id: int, postId: int, comment: Comment):
+    query = comments.update().where(comments.columns.id == _id).values(
+        postId=postId,
+        id=_id,
+        name=comment.name,
+        email=comment.email,
+        body=comment.body,
+        created_at=datetime.now())
+    await database.execute(query)
+    updated_comment = await database.fetch_one(comments.select().where(comments.columns.id == _id))
+    return updated_comment
 
 
-# @app.get("/file/conciliado")
-# async def conciliado():
-#     query = "SELECT file_url FROM files ORDER BY upload_at DESC LIMIT 5"
-#     await database.execute(query)
-#     return json_ob
+@ app.delete("/comments/{_id}")
+async def deleteComment(_id: int):
+    query = comments.delete().where(comments.columns.id == _id)
+    await database.execute(query)
+    return {'message': 'success'}
